@@ -26,6 +26,12 @@ Washington is the first implemented state source:
 
 - `wa/open_checkbook`
 - `wa/open_checkbook_rollups`
+- `wa/recipient_resolution`
+- `wa/hca_managed_care`
+- `wa/doh_sources`
+- `wa/doh_verification_candidates`
+- `wa/dcyf_sources`
+- `wa/dcyf_childcare_candidates`
 
 Run it with:
 
@@ -33,6 +39,12 @@ Run it with:
 cd etl
 python -m pfip_etl.pipeline --state wa --source open_checkbook
 python -m pfip_etl.pipeline --state wa --source open_checkbook_rollups
+python -m pfip_etl.pipeline --state wa --source recipient_resolution
+python -m pfip_etl.pipeline --state wa --source hca_managed_care
+python -m pfip_etl.pipeline --state wa --source doh_sources
+python -m pfip_etl.pipeline --state wa --source doh_verification_candidates
+python -m pfip_etl.pipeline --state wa --source dcyf_sources
+python -m pfip_etl.pipeline --state wa --source dcyf_childcare_candidates
 ```
 
 Outputs are written under `data/raw/<state>/<source>/`.

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import csv
 import json
-import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
 from pfip_etl.io import ensure_directory
+from pfip_etl.states.wa.common import normalize_vendor_name
 
 STATE_CODE = "WA"
 SOURCE_SLUG = "open_checkbook"
@@ -36,15 +36,6 @@ def _raw_csv_path() -> Path:
 
 def _normalized_dir() -> Path:
     return ensure_directory(_data_root() / "normalized" / "wa" / SOURCE_SLUG)
-
-
-def normalize_vendor_name(name: str) -> str:
-    cleaned = name.upper().strip()
-    cleaned = cleaned.replace("&", " AND ")
-    cleaned = re.sub(r"[^A-Z0-9\s]", " ", cleaned)
-    cleaned = re.sub(r"\b(LLC|INC|LTD|CORP|CO|COMPANY|PLL C|PLLC|LP|LLP)\b", " ", cleaned)
-    cleaned = re.sub(r"\s+", " ", cleaned).strip()
-    return cleaned
 
 
 def classify_focus_area(row: dict[str, str]) -> tuple[str, list[str]]:
