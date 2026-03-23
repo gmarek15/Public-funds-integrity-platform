@@ -10,3 +10,5 @@ build/
 .env
 .env.local
 coverage/
+data/
+tmp_*.xlsx

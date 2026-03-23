@@ -1,19 +1,20 @@
-from pfip_etl.connectors.california_procurement import CaliforniaProcurementConnector
-from pfip_etl.normalizers.procurement import normalize_procurement_documents
+import argparse
+
+from pfip_etl.registry import PIPELINES
 
 
-def run_pipeline() -> None:
-    connector = CaliforniaProcurementConnector()
-    documents = connector.fetch()
-    sources, entities, awards, indicators = normalize_procurement_documents(documents)
+def run_pipeline(state: str, source: str) -> None:
+    key = (state.lower(), source.lower())
+    if key not in PIPELINES:
+        known = ", ".join(f"{item[0]}/{item[1]}" for item in sorted(PIPELINES))
+        raise SystemExit(f"Unknown pipeline '{state}/{source}'. Known pipelines: {known}")
 
-    print(f"Fetched {len(documents)} raw documents")
-    print(f"Normalized {len(sources)} sources")
-    print(f"Normalized {len(entities)} entities")
-    print(f"Normalized {len(awards)} awards")
-    print(f"Prepared {len(indicators)} indicator inputs")
-    print("Publisher step not implemented yet; target is PostgreSQL/PostGIS.")
+    PIPELINES[key]()
 
 
 if __name__ == "__main__":
-    run_pipeline()
+    parser = argparse.ArgumentParser(description="Run a state/source ETL pipeline")
+    parser.add_argument("--state", required=True, help="State code, for example 'wa'")
+    parser.add_argument("--source", required=True, help="Source slug, for example 'open_checkbook'")
+    args = parser.parse_args()
+    run_pipeline(state=args.state, source=args.source)

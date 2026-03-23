@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
@@ -61,3 +61,33 @@ class IndicatorInput(BaseModel):
     entity_external_id: str
     source_external_id: str | None = None
     evidence: list[dict] = Field(default_factory=list)
+
+
+class SourceRunManifest(BaseModel):
+    state_code: str
+    source_slug: str
+    source_url: str
+    local_path: str
+    retrieved_at: datetime
+    sha256: str
+
+
+class PaymentRawRecord(BaseModel):
+    state_code: str
+    source_slug: str
+    biennium: str
+    fiscal_year: int
+    fiscal_month: int
+    agency_code: str
+    agency_name: str
+    object_code: str
+    category_name: str
+    subobject_code: str
+    subcategory_name: str
+    vendor_name_raw: str
+    amount: float
+    source_url: str
+    source_sheet: str
+    source_row_number: int
+    retrieved_at: datetime
+    source_file_sha256: str
