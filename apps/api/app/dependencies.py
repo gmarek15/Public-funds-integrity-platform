@@ -1,7 +1,7 @@
-from app.repositories.sample_data import SampleEntityRepository
+from app.repositories.washington_open_checkbook import WashingtonOpenCheckbookRepository
 from app.services.entities import EntityService
 
-_repository = SampleEntityRepository()
+_repository = WashingtonOpenCheckbookRepository()
 _service = EntityService(repository=_repository)
 
 

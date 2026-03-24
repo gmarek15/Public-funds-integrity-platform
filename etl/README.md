@@ -32,6 +32,7 @@ Washington is the first implemented state source:
 - `wa/doh_verification_candidates`
 - `wa/dcyf_sources`
 - `wa/dcyf_childcare_candidates`
+- `wa/dcyf_childcare_verification`
 
 Run it with:
 
@@ -45,6 +46,7 @@ python -m pfip_etl.pipeline --state wa --source doh_sources
 python -m pfip_etl.pipeline --state wa --source doh_verification_candidates
 python -m pfip_etl.pipeline --state wa --source dcyf_sources
 python -m pfip_etl.pipeline --state wa --source dcyf_childcare_candidates
+python -m pfip_etl.pipeline --state wa --source dcyf_childcare_verification
 ```
 
 Outputs are written under `data/raw/<state>/<source>/`.

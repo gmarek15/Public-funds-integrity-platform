@@ -4,8 +4,8 @@ MVP scaffold for a public-records platform that surfaces government spending con
 
 ## MVP scope
 
-- Geography: California
-- Program category: Procurement
+- Geography: Washington
+- Program category: Open Checkbook recipient tracing
 - Frontend: Next.js + TypeScript
 - Backend: FastAPI + Python
 - Database: PostgreSQL + PostGIS
@@ -50,6 +50,18 @@ npm install
 npm run dev
 ```
 
+One-command Windows startup:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Start-PFIP-Dev.ps1
+```
+
+One-command shutdown:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Stop-PFIP-Dev.ps1
+```
+
 Database:
 
 ```bash
@@ -67,4 +79,4 @@ psql -d pfip -f db/seed.sql
 
 ## Notes
 
-This scaffold ships with an in-memory sample repository for fast iteration and a SQL schema for the production PostgreSQL/PostGIS path. Replace the sample repository with a database-backed implementation as the next step.
+The current app is wired to Washington ETL outputs on disk for fast iteration and transparent source review. Replace the file-backed repository with a database-backed implementation as the next step.

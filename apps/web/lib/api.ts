@@ -13,8 +13,8 @@ async function getJson<T>(path: string): Promise<T> {
 export function fetchEntities(query = ""): Promise<SearchResponse> {
   const params = new URLSearchParams({
     q: query,
-    state: "CA",
-    program_category: "procurement",
+    state: "WA",
+    program_category: "all",
   });
   return getJson<SearchResponse>(`/search/entities?${params.toString()}`);
 }
@@ -25,8 +25,8 @@ export function fetchEntity(entityId: string): Promise<EntityDetail> {
 
 export function fetchMap(): Promise<MapResponse> {
   const params = new URLSearchParams({
-    state: "CA",
-    program_category: "procurement",
+    state: "WA",
+    program_category: "all",
   });
   return getJson<MapResponse>(`/map/entities?${params.toString()}`);
 }

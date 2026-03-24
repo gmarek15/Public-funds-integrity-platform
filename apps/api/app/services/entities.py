@@ -11,7 +11,7 @@ from app.schemas.map import (
     EntityMapFeature,
     EntityMapFeatureGeometry,
     EntityMapFeatureProperties,
-    EntityMapResponse,
+    GeoOverviewResponse,
 )
 from app.services.risk_engine import TransparentRiskEngine
 
@@ -47,6 +47,8 @@ class EntityService:
                 state=entity.state,
                 county=entity.county,
                 city=entity.city,
+                zip_code=entity.zip_code,
+                source_system=entity.source_system,
                 program_category=entity.program_category,
                 total_awarded_amount=entity.total_awarded_amount,
                 summary=SearchFacetSummary(
@@ -72,8 +74,10 @@ class EntityService:
             state=entity.state,
             county=entity.county,
             city=entity.city,
+            zip_code=entity.zip_code,
             latitude=entity.latitude,
             longitude=entity.longitude,
+            source_system=entity.source_system,
             program_category=entity.program_category,
             total_awarded_amount=entity.total_awarded_amount,
             audit_findings_count=entity.audit_findings_count,
@@ -88,26 +92,22 @@ class EntityService:
             sources=entity.sources,
         )
 
-    def get_map(self, state: str, program_category: str) -> EntityMapResponse:
-        entities = self.repository.list_entities(state=state, program_category=program_category)
-        return EntityMapResponse(
+    def get_map(self, state: str, program_category: str) -> GeoOverviewResponse:
+        overview = self.repository.get_geo_overview(state=state, program_category=program_category)
+        return GeoOverviewResponse(
             type="FeatureCollection",
             features=[
                 EntityMapFeature(
-                    type="Feature",
-                    geometry=EntityMapFeatureGeometry(
-                        type="Point",
-                        coordinates=[entity.longitude, entity.latitude],
-                    ),
-                    properties=EntityMapFeatureProperties(
-                        entity_id=entity.entity_id,
-                        name=entity.name,
-                        city=entity.city,
-                        county=entity.county,
-                        program_category=entity.program_category,
-                        indicators=self.risk_engine.evaluate(entity),
-                    ),
+                    type=feature["type"],
+                    geometry=EntityMapFeatureGeometry(**feature["geometry"]),
+                    properties=EntityMapFeatureProperties(**feature["properties"]),
                 )
-                for entity in entities
+                for feature in overview["features"]
             ],
+            city_summaries=overview["city_summaries"],
+            county_summaries=overview["county_summaries"],
+            cluster_summaries=overview["cluster_summaries"],
+            reviews=overview["reviews"],
+            county_shapes=overview["county_shapes"],
+            metadata=overview["metadata"],
         )

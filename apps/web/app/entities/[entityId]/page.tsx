@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { RiskBadge } from "@/components/risk-badge";
 import { fetchEntity } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 function currency(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -26,29 +28,31 @@ export default async function EntityPage({
       <main className="shell">
         <div className="frame">
           <section className="hero">
-            <div className="eyebrow">Entity Detail</div>
+            <div className="eyebrow">Recipient Detail</div>
             <div className="link-row">
               <div>
                 <h1 className="entity-title">{entity.name}</h1>
                 <p>
-                  {entity.city}, {entity.county} County, {entity.state} • {entity.entity_type} •{" "}
-                  {entity.program_category}
+                  {entity.city || "Statewide"}, {entity.state}
+                  {entity.zip_code ? ` ${entity.zip_code}` : ""} {" - "}
+                  {entity.entity_type.replaceAll("_", " ")} {" - "}
+                  {entity.program_category.replaceAll("_", " ")}
                 </p>
               </div>
               <Link href="/">Back to search</Link>
             </div>
             <div className="kpi-row">
               <div className="kpi">
-                <span className="muted">Awarded amount</span>
+                <span className="muted">Linked payments</span>
                 <strong>{currency(entity.total_awarded_amount)}</strong>
               </div>
               <div className="kpi">
-                <span className="muted">Audit findings</span>
-                <strong>{entity.audit_findings_count}</strong>
+                <span className="muted">Source system</span>
+                <strong>{entity.source_system.replaceAll("_", " ")}</strong>
               </div>
               <div className="kpi">
-                <span className="muted">Open investigations</span>
-                <strong>{entity.open_investigations_count}</strong>
+                <span className="muted">Automated reviews</span>
+                <strong>{entity.anomaly_count}</strong>
               </div>
             </div>
           </section>
@@ -57,27 +61,34 @@ export default async function EntityPage({
             <div className="panel">
               <div className="section-title">Indicators</div>
               <p className="muted">
-                Each indicator includes a rule explanation and linked source evidence. These
+                Each indicator includes a rule explanation and linked source evidence. Automated
                 indicators highlight records for review and are not final determinations.
               </p>
               <div className="indicator-list">
-                {entity.indicators.map((indicator) => (
-                  <article key={indicator.indicator_id} className="indicator-card">
-                    <div className="chips">
-                      <RiskBadge indicator={indicator} />
-                    </div>
-                    <h3>{indicator.title}</h3>
-                    <p>{indicator.narrative}</p>
-                    <p className="muted">Methodology: {indicator.methodology}</p>
-                    <div className="chips">
-                      {indicator.evidence.map((evidence) => (
-                        <span key={`${indicator.indicator_id}-${evidence.label}`} className="badge">
-                          {evidence.label}: {evidence.value}
-                        </span>
-                      ))}
-                    </div>
-                  </article>
-                ))}
+                {entity.indicators.length === 0 ? (
+                  <div className="timeline-card muted">
+                    No automated review indicators are linked for this recipient in the current
+                    Washington MVP dataset.
+                  </div>
+                ) : (
+                  entity.indicators.map((indicator) => (
+                    <article key={indicator.indicator_id} className="indicator-card">
+                      <div className="chips">
+                        <RiskBadge indicator={indicator} />
+                      </div>
+                      <h3>{indicator.title}</h3>
+                      <p>{indicator.narrative}</p>
+                      <p className="muted">Methodology: {indicator.methodology}</p>
+                      <div className="chips">
+                        {indicator.evidence.map((evidence) => (
+                          <span key={`${indicator.indicator_id}-${evidence.label}`} className="badge">
+                            {evidence.label}: {evidence.value}
+                          </span>
+                        ))}
+                      </div>
+                    </article>
+                  ))
+                )}
               </div>
             </div>
 
@@ -89,7 +100,7 @@ export default async function EntityPage({
                     <div className="eyebrow">{source.source_type.replaceAll("_", " ")}</div>
                     <h3>{source.title}</h3>
                     <p className="muted">
-                      {source.publisher} • {source.publication_date}
+                      {source.publisher} {" - "} {source.publication_date}
                     </p>
                     <p>{source.excerpt}</p>
                     <a href={source.url} target="_blank" rel="noreferrer">
@@ -106,12 +117,15 @@ export default async function EntityPage({
               <div className="section-title">Findings</div>
               <div className="timeline-list">
                 {entity.findings.length === 0 ? (
-                  <div className="timeline-card muted">No confirmed findings linked in the MVP seed.</div>
+                  <div className="timeline-card muted">
+                    No confirmed findings are linked for this recipient in the current Washington
+                    MVP dataset.
+                  </div>
                 ) : (
                   entity.findings.map((finding) => (
                     <article key={finding.finding_id} className="timeline-card">
                       <div className="eyebrow">
-                        {finding.status} • {finding.event_date}
+                        {finding.status} {" - "} {finding.event_date}
                       </div>
                       <h3>{finding.summary}</h3>
                       {finding.amount ? <p>Referenced amount: {currency(finding.amount)}</p> : null}
@@ -126,13 +140,14 @@ export default async function EntityPage({
               <div className="timeline-list">
                 {entity.investigations.length === 0 ? (
                   <div className="timeline-card muted">
-                    No open investigations linked in the MVP seed.
+                    No open investigations are linked for this recipient in the current Washington
+                    MVP dataset.
                   </div>
                 ) : (
                   entity.investigations.map((investigation) => (
                     <article key={investigation.investigation_id} className="timeline-card">
                       <div className="eyebrow">
-                        {investigation.status} • {investigation.event_date}
+                        {investigation.status} {" - "} {investigation.event_date}
                       </div>
                       <h3>{investigation.summary}</h3>
                     </article>

@@ -18,6 +18,8 @@ class EntitySearchItem(BaseModel):
     state: str
     county: str
     city: str
+    zip_code: str
+    source_system: str
     program_category: str
     total_awarded_amount: float
     summary: SearchFacetSummary
@@ -54,8 +56,10 @@ class EntityDetailResponse(BaseModel):
     state: str
     county: str
     city: str
+    zip_code: str
     latitude: float
     longitude: float
+    source_system: str
     program_category: str
     total_awarded_amount: float
     audit_findings_count: int

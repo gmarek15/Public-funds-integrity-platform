@@ -11,3 +11,7 @@ class EntityRepository(ABC):
     @abstractmethod
     def get_entity(self, entity_id: str) -> EntityRecord | None:
         raise NotImplementedError
+
+    @abstractmethod
+    def get_geo_overview(self, state: str, program_category: str) -> dict[str, object]:
+        raise NotImplementedError

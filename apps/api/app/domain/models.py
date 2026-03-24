@@ -61,8 +61,10 @@ class EntityRecord:
     state: str
     county: str
     city: str
+    zip_code: str
     latitude: float
     longitude: float
+    source_system: str
     program_category: str
     total_awarded_amount: float
     audit_findings_count: int

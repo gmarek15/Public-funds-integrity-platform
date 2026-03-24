@@ -10,8 +10,8 @@ router = APIRouter()
 @router.get("/search/entities", response_model=EntitySearchResponse)
 def search_entities(
     q: str = Query(default="", description="Free-text query"),
-    state: str = Query(default="CA"),
-    program_category: str = Query(default="procurement"),
+    state: str = Query(default="WA"),
+    program_category: str = Query(default="all"),
     limit: int = Query(default=20, ge=1, le=100),
     service: EntityService = Depends(get_entity_service),
 ) -> EntitySearchResponse:
